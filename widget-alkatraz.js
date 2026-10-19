@@ -1063,13 +1063,17 @@
             try {
                 const cs = getComputedStyle(buy);
                 const props = ['backgroundColor', 'color', 'borderRadius', 'borderTopWidth', 'borderStyle', 'borderColor', 'fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'textTransform', 'boxShadow'];
-                props.forEach(p => { btn.style[p] = cs[p]; });
-                btn.style.height = buy.offsetHeight + 'px';
-                btn.style.minHeight = buy.offsetHeight + 'px';
-                btn.style.width = '100%';
-                btn.style.padding = '0 16px';
-                btn.style.margin = '0 0 14px';
-                btn.style.borderWidth = cs.borderTopWidth;
+                const imp = (k, v) => btn.style.setProperty(k, v, 'important');
+                const kebab = p => p.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+                props.forEach(p => imp(kebab(p), cs[p]));
+                imp('background-image', 'none');
+                imp('height', buy.offsetHeight + 'px');
+                imp('min-height', buy.offsetHeight + 'px');
+                imp('width', '100%');
+                imp('padding', '0 16px');
+                imp('margin', '0 0 14px');
+                imp('border-width', cs.borderTopWidth);
+                imp('opacity', '1');
                 btn.querySelectorAll('svg, i, img').forEach(el => { el.style.color = cs.color; el.style.fill = 'currentColor'; });
             } catch (e) {}
         }
