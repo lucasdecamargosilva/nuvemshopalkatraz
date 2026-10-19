@@ -152,6 +152,8 @@
         .q-btn-trigger-ia:hover { filter: drop-shadow(0 6px 18px rgba(0,0,0,0.32)); }
         .q-btn-trigger-ia img { width: 100%; height: 100%; object-fit: contain; }
         @media (min-width: 768px) { .q-btn-trigger-ia { width: 72px; height: 72px; top: 48px; right: 16px; } }
+        .q-btn-trigger-ia { right: 34px; } /* Alkatraz: selo um pouco mais à esquerda */
+        @media (min-width: 768px) { .q-btn-trigger-ia { right: 44px; } }
 
         /* ── Inline button ── */
         .q-btn-inline-provador {
@@ -1055,7 +1057,32 @@
             });
             return clone;
         }
+        // Alkatraz (19/10/2026): botão do provador logo ABAIXO do "Comprar", dentro da mesma coluna
+        // (mesma largura) e com o mesmo visual do botão da loja (cores/raio/altura/fonte copiados em runtime).
+        function plCopiaVisualComprar(btn, buy) {
+            try {
+                const cs = getComputedStyle(buy);
+                const props = ['backgroundColor', 'color', 'borderRadius', 'borderTopWidth', 'borderStyle', 'borderColor', 'fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'textTransform', 'boxShadow'];
+                props.forEach(p => { btn.style[p] = cs[p]; });
+                btn.style.height = buy.offsetHeight + 'px';
+                btn.style.minHeight = buy.offsetHeight + 'px';
+                btn.style.width = '100%';
+                btn.style.padding = '0 16px';
+                btn.style.margin = '0 0 14px';
+                btn.style.borderWidth = cs.borderTopWidth;
+                btn.querySelectorAll('svg, i, img').forEach(el => { el.style.color = cs.color; el.style.fill = 'currentColor'; });
+            } catch (e) {}
+        }
+        function plPoeAbaixoDoComprar() {
+            const buy = document.querySelector('.js-addtocart:not(.js-addtocart-placeholder-btn)');
+            if (!buy || !buy.parentNode) return false;
+            if (!inlineBtn.isConnected) buy.parentNode.insertBefore(inlineBtn, buy.nextSibling);
+            plCopiaVisualComprar(inlineBtn, buy);
+            if (!window.__plAlkResize) { window.__plAlkResize = 1; window.addEventListener('resize', () => plCopiaVisualComprar(inlineBtn, buy)); }
+            return true;
+        }
         function placeInlineBtn() {
+            if (plPoeAbaixoDoComprar()) return true;
             const allBuy = Array.from(document.querySelectorAll('[data-store="product-buy-button"]'));
             if (allBuy.length) {
                 let placed = false;
