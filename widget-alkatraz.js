@@ -1072,9 +1072,17 @@
                 imp('width', '100%');
                 imp('padding', '0 16px');
                 imp('margin', '0 0 14px');
-                imp('border-width', cs.borderTopWidth);
+                // sem fundo: contorno e texto na cor do "Comprar" (pedido do Lucas 19/10)
+                const cor = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' ? cs.backgroundColor : cs.color;
+                imp('background-color', 'transparent');
+                imp('color', cor);
+                imp('border', '1.5px solid ' + cor);
+                imp('box-shadow', 'none');
+                // mais perto do Comprar: compensa a margem de baixo dele
+                const mb = parseFloat(cs.marginBottom) || 0;
+                imp('margin', (mb > 8 ? -(mb - 8) : 0) + 'px 0 14px');
                 imp('opacity', '1');
-                btn.querySelectorAll('svg, i, img').forEach(el => { el.style.color = cs.color; el.style.fill = 'currentColor'; });
+                btn.querySelectorAll('svg, i, img').forEach(el => { el.style.color = 'inherit'; el.style.fill = 'currentColor'; });
             } catch (e) {}
         }
         function plPoeAbaixoDoComprar() {
